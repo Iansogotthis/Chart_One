@@ -1,0 +1,20 @@
+{
+    "child": {
+        "directory": "",
+        "height": 469,
+        "overrideCommand": "vim README.md",
+        "profile": "2b7c4080-0ddd-46c5-8f23-563fd3ba789d",
+        "readOnly": false,
+        "synchronizedInput": true,
+        "type": "Terminal",
+        "uuid": "6bf747a4-79da-4a3e-a786-8ecffb3fb998",
+        "width": 722
+    },
+    "height": 469,
+    "name": "${title}",
+    "synchronizedInput": false,
+    "type": "Session",
+    "uuid": "c1c612f6-5cae-4e9f-9bcc-bf35addd5683",
+    "version": "1.0",
+    "width": 722
+}
