@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Main View</title>
     
-
     <!-- Include D3.js library -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
     
@@ -36,7 +35,6 @@
 <body>
     <svg id="chart"></svg>
     
-
     <!-- The Modal -->
     <div id="myModal" class="modal">
       <div class="modal-content">
@@ -197,86 +195,21 @@
           leafSquares.forEach(leaf => {
             leaf.addEventListener('mouseover', () => {
               fruitSquares.forEach(fruit => {
-                fruit.style.opacity = '1';
+                fruit.style.opacity = 1;
               });
             });
 
             leaf.addEventListener('mouseout', () => {
               fruitSquares.forEach(fruit => {
-                fruit.style.opacity = '0.3';
+                fruit.style.opacity = 0.3;
               });
             });
           });
         }
 
-        // Function to load data from the server
-        async function loadData() {
-          try {
-            const response = await fetch('/squares');
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-            const data = await response.json();
-
-            if (!data || data.length === 0) {
-              console.error("No data received from the server.");
-              return;
-            }
-
-            const squareData = data[0]; // Assuming the first object is the root square
-            console.log("Data loaded:", squareData);
-
-            initializeVisualization(squareData); // Initialize visualization with the fetched data
-          } catch (error) {
-            console.error('Error fetching data:', error);
-          }
-        }
-
-        // Function to save data to the server
-        async function saveData() {
-          try {
-                        const response = await fetch('/squares', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                title: 'New Square',
-                plane: 'XY',
-                purpose: 'Example',
-                delineator: 'Example',
-                notations: 'Example',
-                details: 'Example',
-                extraData: 'Example',
-                class: 'root',
-                parent: 'None',
-                depth: 1,
-                name: 'Root Square',
-                size: centerSquareSize,
-                color: 'lightblue',
-                type: 'root',
-                parent_id: null
-              })
-            });
-
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-
-            const result = await response.json();
-            console.log('Data saved:', result);
-          } catch (error) {
-            console.error('Error saving data:', error);
-          }
-        }
-
-        // Load data when the document is ready
-        loadData();
-
-        // Save data when a specific event occurs (e.g., button click)
-        document.getElementById('save-label').addEventListener('click', saveData);
+        // Call the function to adjust fruit opacity on leaf hover
+        adjustFruitOpacityOnLeafHover();
       });
     </script>
 </body>
 </html>
-           
