@@ -58,23 +58,46 @@ app.post("/squares", async (req, res) => {
   try {
     pool.getConnection((err, conn) => {
       if (err) {
-        console.error('Error getting connection:', err);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error("Error getting connection:", err);
+        res.status(500).json({ error: "Internal Server Error" });
         return;
       }
-      conn.query(query, [title, plane, purpose, delineator, notations, details, extraData, squareClass, parent, depth, name, size, color, type, parent_id], (err, results) => {
-        conn.release();
-        if (err) {
-          console.error('Error executing query:', err);
-          res.status(500).json({ error: 'Internal Server Error' });
-          return;
+      conn.query(
+        query,
+        [
+          title,
+          plane,
+          purpose,
+          delineator,
+          notations,
+          details,
+          extraData,
+          squareClass,
+          parent,
+          depth,
+          name,
+          size,
+          color,
+          type,
+          parent_id
+        ],
+        (err, results) => {
+          conn.release();
+          if (err) {
+            console.error("Error executing query:", err);
+            res.status(500).json({ error: "Internal Server Error" });
+            return;
+          }
+          res.status(201).json({
+            message: "Square created successfully",
+            id: results.insertId
+          });
         }
-        res.status(201).json({ message: 'Square created successfully', id: results.insertId });
-      });
+      );
     });
   } catch (err) {
-    console.error('Error creating square:', err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error creating square:", err);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -87,23 +110,23 @@ app.get("/squares", async (req, res) => {
   try {
     pool.getConnection((err, conn) => {
       if (err) {
-        console.error('Error getting connection:', err);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error("Error getting connection:", err);
+        res.status(500).json({ error: "Internal Server Error" });
         return;
       }
       conn.query(query, (err, results) => {
         conn.release();
         if (err) {
-          console.error('Error executing query:', err);
-          res.status(500).json({ error: 'Internal Server Error' });
+          console.error("Error executing query:", err);
+          res.status(500).json({ error: "Internal Server Error" });
           return;
         }
         res.status(200).json(results);
       });
     });
   } catch (err) {
-    console.error('Error fetching squares:', err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error fetching squares:", err);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -117,27 +140,27 @@ app.get("/squares/:id", async (req, res) => {
   try {
     pool.getConnection((err, conn) => {
       if (err) {
-        console.error('Error getting connection:', err);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error("Error getting connection:", err);
+        res.status(500).json({ error: "Internal Server Error" });
         return;
       }
       conn.query(query, [id], (err, results) => {
-                conn.release();
+        conn.release();
         if (err) {
-          console.error('Error executing query:', err);
-          res.status(500).json({ error: 'Internal Server Error' });
+          console.error("Error executing query:", err);
+          res.status(500).json({ error: "Internal Server Error" });
           return;
         }
         if (results.length === 0) {
-          res.status(404).json({ error: 'Square not found' });
+          res.status(404).json({ error: "Square not found" });
           return;
         }
         res.status(200).json(results[0]);
       });
     });
   } catch (err) {
-    console.error('Error fetching square:', err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error fetching square:", err);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -168,27 +191,48 @@ app.put("/squares/:id", async (req, res) => {
   try {
     pool.getConnection((err, conn) => {
       if (err) {
-        console.error('Error getting connection:', err);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error("Error getting connection:", err);
+        res.status(500).json({ error: "Internal Server Error" });
         return;
       }
-      conn.query(query, [title, plane, purpose, delineator, notations, details, extraData, squareClass, parent, depth, name, size, color, type, parent_id, id], (err, results) => {
-        conn.release();
-        if (err) {
-          console.error('Error executing query:', err);
-          res.status(500).json({ error: 'Internal Server Error' });
-          return;
+      conn.query(
+        query,
+        [
+          title,
+          plane,
+          purpose,
+          delineator,
+          notations,
+          details,
+          extraData,
+          squareClass,
+          parent,
+          depth,
+          name,
+          size,
+          color,
+          type,
+          parent_id,
+          id
+        ],
+        (err, results) => {
+          conn.release();
+          if (err) {
+            console.error("Error executing query:", err);
+            res.status(500).json({ error: "Internal Server Error" });
+            return;
+          }
+          if (results.affectedRows === 0) {
+            res.status(404).json({ error: "Square not found" });
+            return;
+          }
+          res.status(200).json({ message: "Square updated successfully" });
         }
-        if (results.affectedRows === 0) {
-          res.status(404).json({ error: 'Square not found' });
-          return;
-        }
-        res.status(200).json({ message: 'Square updated successfully' });
-      });
+      );
     });
   } catch (err) {
-    console.error('Error updating square:', err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error updating square:", err);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -202,27 +246,27 @@ app.delete("/squares/:id", async (req, res) => {
   try {
     pool.getConnection((err, conn) => {
       if (err) {
-        console.error('Error getting connection:', err);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error("Error getting connection:", err);
+        res.status(500).json({ error: "Internal Server Error" });
         return;
       }
       conn.query(query, [id], (err, results) => {
         conn.release();
         if (err) {
-          console.error('Error executing query:', err);
-          res.status(500).json({ error: 'Internal Server Error' });
+          console.error("Error executing query:", err);
+          res.status(500).json({ error: "Internal Server Error" });
           return;
         }
         if (results.affectedRows === 0) {
-          res.status(404).json({ error: 'Square not found' });
+          res.status(404).json({ error: "Square not found" });
           return;
         }
-        res.status(200).json({ message: 'Square deleted successfully' });
+        res.status(200).json({ message: "Square deleted successfully" });
       });
     });
   } catch (err) {
-    console.error('Error deleting square:', err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error deleting square:", err);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -230,4 +274,3 @@ app.delete("/squares/:id", async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-        
