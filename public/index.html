@@ -10,27 +10,178 @@
     
     <!-- Include custom script file -->
     <script src="script.js" defer></script>
-    
-    <style>
-      /* Styling for the squares */
-      .square { stroke: black; stroke-width: 2px; cursor: pointer; }
-      .root { fill: lightblue; }
-      .branch { fill: lightgray; }
-      .leaf { fill: lightgreen; }
-      .fruit { fill: lightcoral; opacity: 0.3; }
-      .fruit:hover { opacity: 1; }
-      
-      /* Basic styling for body and svg */
-      body, html { margin: 0; padding: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-      svg { width: 90vw; height: 90vh; display: block; margin: auto; }
-      
-      /* Modal styling */
-      .modal { display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.4); justify-content: center; align-items: center; }
-      .modal-content { background-color: #fefefe; margin: auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 400px; text-align: center; }
-      .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
-      .close:hover, .close:focus { color: black; text-decoration: none; cursor: pointer; }
-      .modal-button { padding: 10px 20px; margin: 10px; font-size: 16px; cursor: pointer; }
-    </style>
+
+<style>
+    /* Common styles for nav and footer */
+    .nav,
+    .footer {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background-color: #ffffff;
+        padding: 10px 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+        position: absolute;
+        left: 0;
+        right: 0;
+    }
+
+    .nav {
+        top: 0;
+    }
+
+    .footer {
+        bottom: 0;
+    }
+
+    /* Common styles for nav and footer links and buttons */
+    .nav a,
+    .nav button,
+    .footer a,
+    .footer button {
+        margin: 0 15px;
+        text-decoration: none;
+        color: #333;
+        font-size: 16px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+    .nav button,
+    .footer button {
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .nav button:hover,
+    .footer button:hover {
+        background-color: #f0f0f0;
+        border-color: #bbb;
+    }
+
+    /* Content styles */
+    .content {
+        margin-top: 60px;
+        margin-bottom: 60px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: calc(100vh - 120px);
+    }
+
+    /* Styles for SVG elements */
+    .square {
+        stroke: black;
+        stroke-width: 2px;
+        cursor: pointer;
+    }
+
+    .root {
+        fill: lightblue;
+    }
+
+    .branch {
+        fill: lightgray;
+    }
+
+    .leaf {
+        fill: lightgreen;
+    }
+
+    .fruit {
+        fill: lightcoral;
+        opacity: 0.3;
+    }
+
+    .fruit:hover {
+        opacity: 1;
+    }
+
+    /* Basic styling for body and svg */
+    body,
+    html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    svg {
+        width: 90vw;
+        height: 90vh;
+        display: block;
+        margin: auto;
+    }
+
+    /* Modal styling */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 400px;
+        text-align: center;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .modal-button,
+    .delineated-button {
+        padding: 10px 20px;
+        margin: 10px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .delineated-button {
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+    }
+</style>
+        
 </head>
 <body>
       <nav class="nav">
