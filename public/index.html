@@ -33,7 +33,16 @@
     </style>
 </head>
 <body>
+      <nav class="nav">
+        <button img src="/images/orange_repicthousebase_1484336388.png" alt="Logo" id="home-button" class="nav-button" href="index.html">Home</button>
+        <button alt="label" placeholder="Profile" id="profile-button" class="nav-button">Profile</button>
+        <button id="new-button" class="nav-button" href="new-square.html" placeholder="New Square">New Square</button>
+        <button id="stored-button" class="nav-button" href="stored-squares.html" placeholder="Stored Squares">Stored Squares</button>
+        <button id="login ">Login with Google</button>
+        <button id="logout " style="display: none ">Logout</button>
+    </nav>
     <svg id="chart"></svg>
+
     
     <!-- The Modal -->
     <div id="myModal" class="modal">
@@ -49,6 +58,15 @@
         <button id="include" class="modal-button">Include</button>
       </div>
     </div>
+    <footer class="footer">
+        <button class="footer-link" href="https://twitter.com" target="_blank">Twitter</button>
+        <button class="footer-link" href="https://facebook.com" target="_blank">Facebook</button>
+        <button class="footer-link" href="settings.html">Settings</button>
+        <button class="footer-link" href="about.html">About</button>
+        <button class="footer-link" href="contact.html">Contact</button>
+        <button id="footer-logout" class="footer-link">Logout</button>
+    </footer>
+</body>
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
@@ -211,5 +229,6 @@
         adjustFruitOpacityOnLeafHover();
       });
     </script>
-</body>
+
+
 </html>
