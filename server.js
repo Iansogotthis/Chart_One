@@ -1,276 +1,257 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const mysql = require("mysql");
-const cors = require("cors");
-const path = require("path");
-require("dotenv").config(); // Load environment variables from .env file
+import express from 'express';
+import bodyParser from 'body-parser';
+import sqlite3 from 'sqlite3';
+import cors from 'cors';
+import path from 'path';
+import { config } from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
-// Initialize Express application
+// Load environment variables from .env file
+config();
+
+const __filename = fileURLToPath(
+    import.meta.url);
+const __dirname = dirname(__filename);
+
 const app = express();
-const port = process.env.PORT || 3000; // Define the port for the server
+const port = process.env.PORT || 3000;
 
-// Middleware setup
-app.use(cors()); // Enable Cross-Origin Resource Sharing
-app.use(bodyParser.json()); // Parse incoming request bodies in JSON format
+app.use(cors());
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve static files from the 'public' directory
-app.use(express.static(path.join(__dirname, "public")));
-
-// Setup MySQL connection pool
-const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT,
-  connectionLimit: 5, // Maximum number of connections in the pool
-  connectTimeout: 20000, // Increase the connection timeout to 20 seconds
-  acquireTimeout: 20000, // Increase the acquire timeout to 20 seconds
-  timeout: 20000 // Increase the timeout to 20 seconds
+// Database connection
+const db = new sqlite3.Database('./database.db', (err) => {
+    if (err) {
+        console.error('Error connecting to database:', err);
+    } else {
+        console.log('Connected to database');
+    }
 });
 
-// API Routes
+// Create tables function
+function createTables() {
+    const queries = [
+        `CREATE TABLE IF NOT EXISTS squares (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT,
+            plane TEXT,
+            purpose TEXT,
+            delineator TEXT,
+            notations TEXT,
+            details TEXT,
+            extraData TEXT,
+            class TEXT,
+            parent TEXT,
+            depth INTEGER,
+            name TEXT,
+            size TEXT,
+            color TEXT,
+            type TEXT,
+            parent_id INTEGER
+        )`,
+        `CREATE TABLE IF NOT EXISTS chart_one (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            data TEXT,
+            type TEXT,
+            parent_id INTEGER,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`
+    ];
 
-/**
- * Route to create a new square
- * This endpoint creates a new square in the database with the provided data.
- */
-app.post("/squares", async (req, res) => {
-  const {
-    title,
-    plane,
-    purpose,
-    delineator,
-    notations,
-    details,
-    extraData,
-    class: squareClass,
-    parent,
-    depth,
-    name,
-    size,
-    color,
-    type,
-    parent_id
-  } = req.body;
-  const query = `INSERT INTO squares (title, plane, purpose, delineator, notations, details, extraData, class, parent, depth, name, size, color, type, parent_id)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-  try {
-    pool.getConnection((err, conn) => {
-      if (err) {
-        console.error("Error getting connection:", err);
-        res.status(500).json({ error: "Internal Server Error" });
-        return;
-      }
-      conn.query(
-        query,
-        [
-          title,
-          plane,
-          purpose,
-          delineator,
-          notations,
-          details,
-          extraData,
-          squareClass,
-          parent,
-          depth,
-          name,
-          size,
-          color,
-          type,
-          parent_id
-        ],
-        (err, results) => {
-          conn.release();
-          if (err) {
-            console.error("Error executing query:", err);
-            res.status(500).json({ error: "Internal Server Error" });
-            return;
-          }
-          res.status(201).json({
-            message: "Square created successfully",
-            id: results.insertId
-          });
-        }
-      );
+    queries.forEach((query) => {
+        db.run(query, (err) => {
+            if (err) {
+                console.error('Error creating table:', err);
+            } else {
+                console.log('Table created successfully');
+            }
+        });
     });
-  } catch (err) {
-    console.error("Error creating square:", err);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
+}
+
+// Create tables
+createTables();
+
+// Define routes
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-/**
- * Route to get all squares
- * This endpoint retrieves and returns all squares from the database.
- */
-app.get("/squares", async (req, res) => {
-  const query = "SELECT * FROM squares";
-  try {
-    pool.getConnection((err, conn) => {
-      if (err) {
-        console.error("Error getting connection:", err);
-        res.status(500).json({ error: "Internal Server Error" });
-        return;
-      }
-      conn.query(query, (err, results) => {
-        conn.release();
+// GET all squares
+app.get('/squares', (req, res) => {
+    db.all('SELECT * FROM squares', (err, rows) => {
         if (err) {
-          console.error("Error executing query:", err);
-          res.status(500).json({ error: "Internal Server Error" });
-          return;
+            console.error('Error fetching squares:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json(rows);
         }
-        res.status(200).json(results);
-      });
     });
-  } catch (err) {
-    console.error("Error fetching squares:", err);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
 });
 
-/**
- * Route to get a single square by ID
- * This endpoint retrieves a square from the database based on the provided ID.
- */
-app.get("/squares/:id", async (req, res) => {
-  const { id } = req.params;
-  const query = "SELECT * FROM squares WHERE id = ?";
-  try {
-    pool.getConnection((err, conn) => {
-      if (err) {
-        console.error("Error getting connection:", err);
-        res.status(500).json({ error: "Internal Server Error" });
-        return;
-      }
-      conn.query(query, [id], (err, results) => {
-        conn.release();
+// GET square by id
+app.get('/squares/:id', (req, res) => {
+    const id = req.params.id;
+    db.get('SELECT * FROM squares WHERE id = ?', [id], (err, row) => {
         if (err) {
-          console.error("Error executing query:", err);
-          res.status(500).json({ error: "Internal Server Error" });
-          return;
+            console.error('Error fetching square:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else if (!row) {
+            res.status(404).json({ error: 'Square not found' });
+        } else {
+            res.json(row);
         }
-        if (results.length === 0) {
-          res.status(404).json({ error: "Square not found" });
-          return;
-        }
-        res.status(200).json(results[0]);
-      });
     });
-  } catch (err) {
-    console.error("Error fetching square:", err);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
 });
 
-/**
- * Route to update a square by ID
- * This endpoint updates a square in the database based on the provided ID and data.
- */
-app.put("/squares/:id", async (req, res) => {
-  const { id } = req.params;
-  const {
-    title,
-    plane,
-    purpose,
-    delineator,
-    notations,
-    details,
-    extraData,
-    class: squareClass,
-    parent,
-    depth,
-    name,
-    size,
-    color,
-    type,
-    parent_id
-  } = req.body;
-  const query = `UPDATE squares SET title = ?, plane = ?, purpose = ?, delineator = ?, notations = ?, details = ?, extraData = ?, class = ?, parent = ?, depth = ?, name = ?, size = ?, color = ?, type = ?, parent_id = ? WHERE id = ?`;
-  try {
-    pool.getConnection((err, conn) => {
-      if (err) {
-        console.error("Error getting connection:", err);
-        res.status(500).json({ error: "Internal Server Error" });
-        return;
-      }
-      conn.query(
-        query,
-        [
-          title,
-          plane,
-          purpose,
-          delineator,
-          notations,
-          details,
-          extraData,
-          squareClass,
-          parent,
-          depth,
-          name,
-          size,
-          color,
-          type,
-          parent_id,
-          id
-        ],
-        (err, results) => {
-          conn.release();
-          if (err) {
-            console.error("Error executing query:", err);
-            res.status(500).json({ error: "Internal Server Error" });
-            return;
-          }
-          if (results.affectedRows === 0) {
-            res.status(404).json({ error: "Square not found" });
-            return;
-          }
-          res.status(200).json({ message: "Square updated successfully" });
-        }
-      );
-    });
-  } catch (err) {
-    console.error("Error updating square:", err);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-/**
- * Route to delete a square by ID
- * This endpoint deletes a square from the database based on the provided ID.
- */
-app.delete("/squares/:id", async (req, res) => {
-  const { id } = req.params;
-  const query = "DELETE FROM squares WHERE id = ?";
-  try {
-    pool.getConnection((err, conn) => {
-      if (err) {
-        console.error("Error getting connection:", err);
-        res.status(500).json({ error: "Internal Server Error" });
-        return;
-      }
-      conn.query(query, [id], (err, results) => {
-        conn.release();
+// POST new square
+app.post('/squares', (req, res) => {
+    const square = req.body;
+    db.run('INSERT INTO squares (title, plane, purpose, delineator, notations, details, extraData, class, parent, depth, name, size, color, type, parent_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+        square.title,
+        square.plane,
+        square.purpose,
+        square.delineator,
+        square.notations,
+        square.details,
+        square.extraData,
+        square.class,
+        square.parent,
+        square.depth,
+        square.name,
+        square.size,
+        square.color,
+        square.type,
+        square.parent_id,
+    ], function(err) {
         if (err) {
-          console.error("Error executing query:", err);
-          res.status(500).json({ error: "Internal Server Error" });
-          return;
+            console.error('Error creating square:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json({ id: this.lastID });
         }
-        if (results.affectedRows === 0) {
-          res.status(404).json({ error: "Square not found" });
-          return;
-        }
-        res.status(200).json({ message: "Square deleted successfully" });
-      });
     });
-  } catch (err) {
-    console.error("Error deleting square:", err);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
 });
 
-// Start the server
+// PUT update square
+app.put('/squares/:id', (req, res) => {
+    const id = req.params.id;
+    const square = req.body;
+    db.run('UPDATE squares SET title = ?, plane = ?, purpose = ?, delineator = ?, notations = ?, details = ?, extraData = ?, class = ?, parent = ?, depth = ?, name = ?, size = ?, color = ?, type = ?, parent_id = ? WHERE id = ?', [
+        square.title,
+        square.plane,
+        square.purpose,
+        square.delineator,
+        square.notations,
+        square.details,
+        square.extraData,
+        square.class,
+        square.parent,
+        square.depth,
+        square.name,
+        square.size,
+        square.color,
+        square.type,
+        square.parent_id,
+        id,
+    ], (err) => {
+        if (err) {
+            console.error('Error updating square:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json({ id: id });
+        }
+    });
+});
+
+// DELETE square
+app.delete('/squares/:id', (req, res) => {
+    const id = req.params.id;
+    db.run('DELETE FROM squares WHERE id = ?', [id], (err) => {
+        if (err) {
+            console.error('Error deleting square:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json({ id: id });
+        }
+    });
+});
+
+// GET all chart_one
+app.get('/chart_one', (req, res) => {
+    db.all('SELECT * FROM chart_one', (err, rows) => {
+        if (err) {
+            console.error('Error fetching chart_one:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json(rows);
+        }
+    });
+});
+
+// GET chart_one by id
+app.get('/chart_one/:id', (req, res) => {
+    const id = req.params.id;
+    db.get('SELECT * FROM chart_one WHERE id = ?', [id], (err, row) => {
+        if (err) {
+            console.error('Error fetching chart_one:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else if (!row) {
+            res.status(404).json({ error: 'Chart_one not found' });
+        } else {
+            res.json(row);
+        }
+    });
+});
+
+// POST new chart_one
+app.post('/chart_one', (req, res) => {
+    const chart_one = req.body;
+    db.run('INSERT INTO chart_one (title, data, type, parent_id) VALUES (?, ?, ?, ?)', [
+        chart_one.title,
+        chart_one.data,
+        chart_one.type,
+        chart_one.parent_id,
+    ], function(err) {
+        if (err) {
+            console.error('Error creating chart_one:', err)
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json({ id: this.lastID });
+        }
+    });
+});
+
+// PUT update chart_one
+app.put('/chart_one/:id', (req, res) => {
+    const id = req.params.id;
+    const chart_one = req.body;
+    db.run('UPDATE chart_one SET title = ?, data = ?, type = ?, parent_id = ? WHERE id = ?', [
+        chart_one.title,
+        chart_one.data,
+        chart_one.type,
+        chart_one.parent_id,
+        id,
+    ], (err) => {
+        if (err) {
+            console.error('Error updating chart_one:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json({ id: id });
+        }
+    });
+});
+
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+    console.log(`Server is running on port ${port}`);
+});
+
+// Error handling
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
 });

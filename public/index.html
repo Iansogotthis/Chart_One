@@ -1,190 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Main View</title>
-    
     <!-- Include D3.js library -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    
+    <script src="https://d3js.org/d3-scale-chromatic.v3.min.js"></script>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
     <!-- Include custom script file -->
-    <script src="script.js" defer></script>
+    <script type="module" src="script.js" defer></script>
+    <!-- Include custom script file -->
 
-<style>
-    /* Common styles for nav and footer */
-    .nav,
-    .footer {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        background-color: #ffffff;
-        padding: 10px 20px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        border-radius: 5px;
-        position: absolute;
-        left: 0;
-        right: 0;
-    }
-
-    .nav {
-        top: 0;
-    }
-
-    .footer {
-        bottom: 0;
-    }
-
-    /* Common styles for nav and footer links and buttons */
-    .nav a,
-    .nav button,
-    .footer a,
-    .footer button {
-        margin: 0 15px;
-        text-decoration: none;
-        color: #333;
-        font-size: 16px;
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-family: inherit;
-    }
-
-    .nav button,
-    .footer button {
-        padding: 5px 10px;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-        transition: background-color 0.3s, border-color 0.3s;
-    }
-
-    .nav button:hover,
-    .footer button:hover {
-        background-color: #f0f0f0;
-        border-color: #bbb;
-    }
-
-    /* Content styles */
-    .content {
-        margin-top: 60px;
-        margin-bottom: 60px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: calc(100vh - 120px);
-    }
-
-    /* Styles for SVG elements */
-    .square {
-        stroke: black;
-        stroke-width: 2px;
-        cursor: pointer;
-    }
-
-    .root {
-        fill: lightblue;
-    }
-
-    .branch {
-        fill: lightgray;
-    }
-
-    .leaf {
-        fill: lightgreen;
-    }
-
-    .fruit {
-        fill: lightcoral;
-        opacity: 0.3;
-    }
-
-    .fruit:hover {
-        opacity: 1;
-    }
-
-    /* Basic styling for body and svg */
-    body,
-    html {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-    }
-
-    svg {
-        width: 90vw;
-        height: 90vh;
-        display: block;
-        margin: auto;
-    }
-
-    /* Modal styling */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.4);
-        justify-content: center;
-        align-items: center;
-    }
-
-    .modal-content {
-        background-color: #fefefe;
-        margin: auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%;
-        max-width: 400px;
-        text-align: center;
-    }
-
-    .close {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-    }
-
-    .close:hover,
-    .close:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    .modal-button,
-    .delineated-button {
-        padding: 10px 20px;
-        margin: 10px;
-        font-size: 16px;
-        cursor: pointer;
-    }
-
-    .delineated-button {
-        position: absolute;
-        top: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-    }
-</style>
+    <style>
+        /* Common styles for nav and footer */
         
+        .nav,
+        .footer {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: #ffffff;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            position: absolute;
+            left: 0;
+            right: 0;
+        }
+        
+        .nav {
+            top: 0;
+        }
+        
+        .footer {
+            bottom: 0;
+        }
+        /* Common styles for nav and footer links and buttons */
+        
+        .nav a,
+        .nav button,
+        .footer a,
+        .footer button {
+            margin: 0 15px;
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        
+        .nav button,
+        .footer button {
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        
+        .nav button:hover,
+        .footer button:hover {
+            background-color: #f0f0f0;
+            border-color: #bbb;
+        }
+        /* Content styles */
+        
+        .content {
+            margin-top: 60px;
+            margin-bottom: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: calc(100vh - 120px);
+        }
+        /* Styles for SVG elements */
+        
+        .square {
+            stroke: black;
+            stroke-width: 2px;
+            cursor: pointer;
+        }
+        
+        .root {
+            fill: lightblue;
+        }
+        
+        .branch {
+            fill: lightgray;
+        }
+        
+        .leaf {
+            fill: lightgreen;
+        }
+        
+        .fruit {
+            fill: lightcoral;
+            opacity: 0.3;
+        }
+        
+        .fruit:hover {
+            opacity: 1;
+        }
+        /* Basic styling for body and svg */
+        
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        svg {
+            width: 90vw;
+            height: 90vh;
+            display: block;
+            margin: auto;
+        }
+        /* Modal styling */
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .modal-button,
+        .delineated-button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        .delineated-button {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+
 </head>
+
 <body>
-      <nav class="nav">
+    <nav class="nav">
         <button img src="/images/orange_repicthousebase_1484336388.png" alt="Logo" id="home-button" class="nav-button" href="index.html">Home</button>
         <button alt="label" placeholder="Profile" id="profile-button" class="nav-button">Profile</button>
         <button id="new-button" class="nav-button" href="new-square.html" placeholder="New Square">New Square</button>
@@ -192,22 +199,29 @@
         <button id="login ">Login with Google</button>
         <button id="logout " style="display: none ">Logout</button>
     </nav>
+    <span><button id="delineated-button" class="delineated-button">Delineate</button></span>
+
+    <div id="chart-container"></div>
     <svg id="chart"></svg>
 
-    
+
+
+
+
+
     <!-- The Modal -->
     <div id="myModal" class="modal">
-      <div class="modal-content">
-        <span class="close">&times;</span>
-        <p id="modal-text">Edit Label:</p>
-        <input type="text" id="label-input" />
-        <button id="save-label" class="modal-button">Save</button>
-        <button id="cancel" class="modal-button">Cancel</button>
-        <br />
-        <button id="view-scale" class="modal-button">Scaled View</button>
-        <button id="view-scope" class="modal-button">Scoped View</button>
-        <button id="include" class="modal-button">Include</button>
-      </div>
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p id="modal-text">Edit Label:</p>
+            <input type="text" id="label-input" />
+            <button id="save-label" class="modal-button">Save</button>
+            <button id="cancel" class="modal-button">Cancel</button>
+            <br />
+            <button id="view-scale" class="modal-button">Scaled View</button>
+            <button id="view-scope" class="modal-button">Scoped View</button>
+            <button id="include" class="modal-button">Include</button>
+        </div>
     </div>
     <footer class="footer">
         <button class="footer-link" href="https://twitter.com" target="_blank">Twitter</button>
@@ -219,8 +233,8 @@
     </footer>
 </body>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
         // Set SVG dimensions and center points
         const svg = d3.select("#chart");
         const width = window.innerWidth * 0.9;
@@ -252,64 +266,76 @@
 
         // Function to open the modal
         function openModal(className, textElement) {
-          modal.style.display = "flex";
-          currentTextElement = textElement;
-          currentSquareClass = className;
-          labelInput.value = textElement.textContent;
-          modalText.textContent = `Square ${className} clicked! Edit Label:`;
+            modal.style.display = "flex";
+            currentTextElement = textElement;
+            currentSquareClass = className;
+            labelInput.value = textElement.textContent;
+            modalText.textContent = `Square ${className} clicked! Edit Label:`;
         }
 
         // Event listener to close modal when the close button is clicked
-        btnClose.onclick = function () { modal.style.display = "none"; };
+        btnClose.onclick = function() {
+            modal.style.display = "none";
+        };
 
         // Event listener to close modal when clicking outside of the modal
-        window.onclick = function (event) { if (event.target === modal) modal.style.display = "none"; };
+        window.onclick = function(event) {
+            if (event.target === modal) modal.style.display = "none";
+        };
 
         // Event listener to save the label when save button is clicked
-        btnSaveLabel.onclick = function () { 
-          if (currentTextElement) {
-            currentTextElement.textContent = labelInput.value; 
-            modal.style.display = "none";
-          }
+        btnSaveLabel.onclick = function() {
+            if (currentTextElement) {
+                currentTextElement.textContent = labelInput.value;
+                modal.style.display = "none";
+            }
         };
 
         // Event listeners for modal action buttons
-        btnViewScale.onclick = function () { window.location.href = "scaled_view.html"; };
-        btnViewScope.onclick = function () { window.location.href = "scoped_view.html"; };
-        btnInclude.onclick = function () { window.location.href = `included_build.html?class=${currentSquareClass}&parent=${currentTextElement.textContent}`; };
-        btnCancel.onclick = function () { modal.style.display = "none"; };
+        btnViewScale.onclick = function() {
+            window.location.href = "scaled_view.html";
+        };
+        btnViewScope.onclick = function() {
+            window.location.href = "scoped_view.html";
+        };
+        btnInclude.onclick = function() {
+            window.location.href = `included_build.html?class=${currentSquareClass}&parent=${currentTextElement.textContent}`;
+        };
+        btnCancel.onclick = function() {
+            modal.style.display = "none";
+        };
 
         // Debounce function to prevent frequent clicks
         function debounce(func, wait) {
-          let timeout;
-          return function (...args) {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func.apply(this, args), wait);
-          };
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
         }
 
         // Function to draw a square and add click event listener
         function drawSquare(x, y, size, color, className, depth, parentText) {
-          const rect = svg.append("rect")
-            .attr("x", x - size / 2)
-            .attr("y", y - size / 2)
-            .attr("width", size)
-            .attr("height", size)
-            .attr("class", `square ${className}`)
-            .attr("fill", color)
-            .on("click", debounce(function () {
-              const textElement = d3.select(this.nextSibling);
-              openModal(className, textElement.node());
-            }, 200));
+            const rect = svg.append("rect")
+                .attr("x", x - size / 2)
+                .attr("y", y - size / 2)
+                .attr("width", size)
+                .attr("height", size)
+                .attr("class", `square ${className}`)
+                .attr("fill", color)
+                .on("click", debounce(function() {
+                    const textElement = d3.select(this.nextSibling);
+                    openModal(className, textElement.node());
+                }, 200));
 
-          const text = svg.append("text")
-            .attr("x", x)
-            .attr("y", y)
-            .attr("dy", "0.35em")
-            .attr("text-anchor", "middle")
-            .attr("font-size", size / 5)
-            .attr("pointer-events", "none")
-            .text(className);
+            const text = svg.append("text")
+                .attr("x", x)
+                .attr("y", y)
+                .attr("dy", "0.35em")
+                .attr("text-anchor", "middle")
+                .attr("font-size", size / 5)
+                .attr("pointer-events", "none")
+                .text(className);
         }
 
         // Draw the root square at the center
@@ -317,40 +343,45 @@
 
         // Define coordinates for small squares around the root
         const corners = [
-          [centerX - centerSquareSize / 2, centerY - centerSquareSize / 2],
-          [centerX + centerSquareSize / 2, centerY - centerSquareSize / 2],
-          [centerX - centerSquareSize / 2, centerY + centerSquareSize / 2],
-          [centerX + centerSquareSize / 2, centerY + centerSquareSize / 2],
+            [centerX - centerSquareSize / 2, centerY - centerSquareSize / 2],
+            [centerX + centerSquareSize / 2, centerY - centerSquareSize / 2],
+            [centerX - centerSquareSize / 2, centerY + centerSquareSize / 2],
+            [centerX + centerSquareSize / 2, centerY + centerSquareSize / 2],
         ];
 
         // Recursive function to draw squares in a hierarchy
         function drawSquares(corners, size, depth, className, parentText) {
-          if (depth > 3) return; // Limit the depth for better performance
+            if (depth > 3) return; // Limit the depth for better performance
 
-          const colors = { root: "lightblue", branch: "lightgray", leaf: "lightgreen", fruit: "lightcoral" };
+            const colors = {
+                root: "lightblue",
+                branch: "lightgray",
+                leaf: "lightgreen",
+                fruit: "lightcoral"
+            };
 
-          corners.forEach(([x, y], index) => {
-            let currentClassName;
-            if (depth === 1) currentClassName = "branch";
-            else if (depth === 2) currentClassName = "leaf";
-            else if (depth === 3) currentClassName = "fruit";
+            corners.forEach(([x, y], index) => {
+                let currentClassName;
+                if (depth === 1) currentClassName = "branch";
+                else if (depth === 2) currentClassName = "leaf";
+                else if (depth === 3) currentClassName = "fruit";
 
-            drawSquare(x, y, size, colors[currentClassName] || "", currentClassName || "", depth, parentText);
+                drawSquare(x, y, size, colors[currentClassName] || "", currentClassName || "", depth, parentText);
 
-            if (size > tinySquareSize) {
-              const nextSize = size / 2;
-              const nextCorners = [
-                [x - size / 2, y - size / 2],
-                [x + size / 2, y - size / 2],
-                [x - size / 2, y + size / 2],
-                [x + size / 2, y + size / 2],
-              ];
+                if (size > tinySquareSize) {
+                    const nextSize = size / 2;
+                    const nextCorners = [
+                        [x - size / 2, y - size / 2],
+                        [x + size / 2, y - size / 2],
+                        [x - size / 2, y + size / 2],
+                        [x + size / 2, y + size / 2],
+                    ];
 
-              requestAnimationFrame(() => {
-                drawSquares(nextCorners, nextSize, depth + 1, currentClassName || "", `${parentText}_${index + 1}`);
-              });
-            }
-          });
+                    requestAnimationFrame(() => {
+                        drawSquares(nextCorners, nextSize, depth + 1, currentClassName || "", `${parentText}_${index + 1}`);
+                    });
+                }
+            });
         }
 
         // Start the recursive drawing
@@ -358,28 +389,28 @@
 
         // Function to adjust fruit opacity on leaf hover
         function adjustFruitOpacityOnLeafHover() {
-          const leafSquares = document.querySelectorAll('.leaf');
-          const fruitSquares = document.querySelectorAll('.fruit');
+            const leafSquares = document.querySelectorAll('.leaf');
+            const fruitSquares = document.querySelectorAll('.fruit');
 
-          leafSquares.forEach(leaf => {
-            leaf.addEventListener('mouseover', () => {
-              fruitSquares.forEach(fruit => {
-                fruit.style.opacity = 1;
-              });
-            });
+            leafSquares.forEach(leaf => {
+                leaf.addEventListener('mouseover', () => {
+                    fruitSquares.forEach(fruit => {
+                        fruit.style.opacity = 1;
+                    });
+                });
 
-            leaf.addEventListener('mouseout', () => {
-              fruitSquares.forEach(fruit => {
-                fruit.style.opacity = 0.3;
-              });
+                leaf.addEventListener('mouseout', () => {
+                    fruitSquares.forEach(fruit => {
+                        fruit.style.opacity = 0.3;
+                    });
+                });
             });
-          });
         }
 
         // Call the function to adjust fruit opacity on leaf hover
         adjustFruitOpacityOnLeafHover();
-      });
-    </script>
+    });
+</script>
 
 
 </html>
